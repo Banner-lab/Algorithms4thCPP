@@ -5,15 +5,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define  TABLE_SIZE 10
+#define  TABLE_SIZE 9
 #define  SUCCESS 1
 #define  FAIL 0
+#define  TRUE 1
+#define  FALSE 0
 
-enum Status {Discovered,UnDiscovered};
+enum Status {UnDiscovered,Discovered};
+
 
 typedef char Vertex;
 typedef int  Edge;
 typedef int  Weight;
+
+//int isVisited[TABLE_SIZE]={Undiscovered};
+//char parent[TABLE_SIZE];
+int isVisited[TABLE_SIZE];
 
 typedef struct Vertex_Edge{
     Vertex name;
@@ -135,19 +142,45 @@ void test(Graph* g){
 }
 
 
-/*void DepthFirstSearch(Graph* g,Vertex s){
-
-    AdjHead * start=find_Vertex(g,s);
-    Vertex_Edge* temp=start->first_edge;
-
-}*/
+int hash(Vertex v){
+    return v-'a';
+}
 
 
+void dfs(Graph* g,Vertex v){
+    AdjHead *head=find_Vertex(g,v);
+    isVisited[head->name-'a']=TRUE;
+    printf("%c\t",head->name);
+    Vertex_Edge * firstedge=head->first_edge;
+    while(firstedge!=NULL){
+        if(isVisited[firstedge->name-'a']==FALSE)
+            dfs(g,firstedge->name);
+        firstedge=firstedge->next;
+    }
+
+}
+
+void DepthFirstSearch(Graph* g){
+
+
+    for(int i=0;i<g->numOfVertex;i++)
+        isVisited[i]=FALSE;
+
+    for(int i=0;i<g->numOfVertex;i++){
+        AdjHead head=g->adj[i];
+        int index=hash(head.name);
+
+        if(isVisited[index]==FALSE)
+            dfs(g,head.name);
+    }
+
+}
 
 
 
 int main(void){
     Graph *g=create_graph(9);
     test(g);
+    DepthFirstSearch(g);
     return 0;
 }
