@@ -11,16 +11,15 @@
 #define  TRUE 1
 #define  FALSE 0
 
-enum Status {UnDiscovered,Discovered};
-
-
 typedef char Vertex;
 typedef int  Edge;
 typedef int  Weight;
 
-//int isVisited[TABLE_SIZE]={Undiscovered};
-//char parent[TABLE_SIZE];
+
 int isVisited[TABLE_SIZE];
+char edgeTo[TABLE_SIZE];
+char path[TABLE_SIZE];//路径记录
+int  Index=0;
 
 typedef struct Vertex_Edge{
     Vertex name;
@@ -175,12 +174,62 @@ void DepthFirstSearch(Graph* g){
     }
 
 }
+/******PATH**********/
+//Find all the ways from v
+//Also use DepthFirstSearch
+//查找从起点v开始的所有路径，使用了edgeTo来记录当前结点的前驱
+void dfs_path(Graph* g,Vertex v){
+    AdjHead *head=find_Vertex(g,v);
+    isVisited[head->name-'a']=TRUE;
+    Vertex_Edge * fedge=head->first_edge;
+
+    while(fedge!=NULL){
+        if(isVisited[fedge->name-'a']==FALSE){
+            edgeTo[fedge->name-'a']=v;
+            dfs_path(g,fedge->name);
+        }
+        fedge=fedge->next;
+    }
+}
+
+void pathTo(Graph* g,Vertex v,Vertex start){
+    if(isVisited[v-'a']==FALSE)
+    {
+        printf("There is no way to v\n");
+        exit(-1);
+    }
+    Index=0;
+    for(char begin=v;begin!=start;begin=edgeTo[begin-'a']){
+        path[Index++]=begin;
+    }
+
+    path[Index++]=start;
+}
+
+void DepthFirstPaths(Graph* g,Vertex v){//looking for all ways from v
+
+    for(int i=0;i<g->numOfVertex;i++)
+        isVisited[i]=FALSE;
+
+    dfs_path(g,v);
+}
+/******PATH************/
 
 
 
 int main(void){
     Graph *g=create_graph(9);
     test(g);
-    DepthFirstSearch(g);
+    //DepthFirstSearch(g);
+    DepthFirstPaths(g,'a');
+    for(int i=1;i<g->numOfVertex;i++)
+    {
+        pathTo(g,'a'+i,'a');
+        for(int i=Index-1;i>0;i--){
+        printf("%c------>",path[i]);
+    }
+    printf("%c\n",path[0]);
+    }
+    printf("\n");
     return 0;
 }
