@@ -20,7 +20,7 @@ class BoyerMoore{
             int index=0;
 
             for(char c:pat)
-                pat[c]=index++;
+                right[c]=index++;
         }
 
         int search(std::string txt){
@@ -28,7 +28,7 @@ class BoyerMoore{
             int M=pat.length();
 
             int skip;
-            for(int i=0;i<=N-M;i++){
+            for(int i=0;i<=N-M;i+=skip){
                 skip=0;
 
                 for(int j=M-1;j>=0;j--){
@@ -47,3 +47,4 @@ class BoyerMoore{
 };
 
 #endif //KAOYAN_BOYERMOORE_H
+
