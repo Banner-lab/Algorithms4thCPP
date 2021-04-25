@@ -16,6 +16,14 @@ class DirectedDFS{
             dfs(g,s);
         }
 
+        DirectedDFS(Digraph* g,std::vector<int> vec){
+            marked.resize(g->V(),false);
+            for(int v:vec){
+                if(!marked[v])
+                    dfs(g,v);
+            }
+        }
+
         void dfs(Digraph* g,int s){
             marked[s]=true;
             for(int w:g->Adj(s)){
